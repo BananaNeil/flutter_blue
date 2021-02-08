@@ -15,8 +15,15 @@ class BluetoothService {
       : uuid = new Guid(p.uuid),
         deviceId = new DeviceIdentifier(p.remoteId),
         isPrimary = p.isPrimary,
-        characteristics = p.characteristics
-            .map((c) => new BluetoothCharacteristic.fromProto(c))
+        characteristics = (p.characteristics
+            // For some reason, we are finding empty string
+            // characteristics. This is causing the BLE connection
+            // to break. Maybe this is something we are broadcasting
+            // from the bridge?
+            ..forEach((c) {
+              if (c.serviceUuid == null || c.serviceUuid == '')
+                c.serviceUuid = p.uuid;
+            })).map((c) => new BluetoothCharacteristic.fromProto(c))
             .toList(),
         includedServices = p.includedServices
             .map((s) => new BluetoothService.fromProto(s))

@@ -277,7 +277,10 @@ typedef NS_ENUM(NSUInteger, LogLevel) {
 
 - (CBCharacteristic*)locateCharacteristic:(NSString*)characteristicId peripheral:(CBPeripheral*)peripheral serviceId:(NSString*)serviceId secondaryServiceId:(NSString*)secondaryServiceId {
   CBService *primaryService = [self getServiceFromArray:serviceId array:[peripheral services]];
-  if(primaryService == nil || [primaryService isPrimary] == false) {
+  /* Services being sent from the flowtoys bridge are not being marked as 'isPrimary' */
+  /* This is causing an exception, changing the following line as follows solved this. */
+  /* if(primaryService == nil || [primaryService isPrimary] == false) { */
+  if(primaryService == nil) {
     @throw [FlutterError errorWithCode:@"locateCharacteristic"
                                message:@"service could not be located on the device"
                                details:nil];
