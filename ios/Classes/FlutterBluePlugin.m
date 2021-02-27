@@ -509,7 +509,7 @@ typedef NS_ENUM(NSUInteger, LogLevel) {
   }
   ProtosReadDescriptorResponse *result = [[ProtosReadDescriptorResponse alloc] init];
   [result setRequest:q];
-  int value = [descriptor.value intValue];
+  int value = (int)descriptor.value;
   [result setValue:[NSData dataWithBytes:&value length:sizeof(value)]];
   [_channel invokeMethod:@"ReadDescriptorResponse" arguments:[self toFlutterData:result]];
 
@@ -577,7 +577,7 @@ typedef NS_ENUM(NSUInteger, LogLevel) {
 - (ProtosScanResult*)toScanResultProto:(CBPeripheral *)peripheral advertisementData:(NSDictionary<NSString *,id> *)advertisementData RSSI:(NSNumber *)RSSI {
   ProtosScanResult *result = [[ProtosScanResult alloc] init];
   [result setDevice:[self toDeviceProto:peripheral]];
-  [result setRssi:[RSSI intValue]];
+  [result setRssi:((int)RSSI)];
   ProtosAdvertisementData *ads = [[ProtosAdvertisementData alloc] init];
   [ads setConnectable:[advertisementData[CBAdvertisementDataIsConnectable] boolValue]];
   [ads setLocalName:advertisementData[CBAdvertisementDataLocalNameKey]];
@@ -585,7 +585,7 @@ typedef NS_ENUM(NSUInteger, LogLevel) {
   NSNumber *txPower = advertisementData[CBAdvertisementDataTxPowerLevelKey];
   if(txPower != nil) {
     ProtosInt32Value *txPowerWrapper = [[ProtosInt32Value alloc] init];
-    [txPowerWrapper setValue:[txPower intValue]];
+    [txPowerWrapper setValue:((int)txPower)];
     [ads setTxPowerLevel:txPowerWrapper];
   }
   // Manufacturer Specific Data
@@ -712,7 +712,7 @@ typedef NS_ENUM(NSUInteger, LogLevel) {
   [result setRemoteId:[peripheral.identifier UUIDString]];
   [result setCharacteristicUuid:[descriptor.characteristic.UUID fullUUIDString]];
   [result setServiceUuid:[descriptor.characteristic.service.UUID fullUUIDString]];
-  int value = [descriptor.value intValue];
+  int value = (int)descriptor.value;
   [result setValue:[NSData dataWithBytes:&value length:sizeof(value)]];
   return result;
 }
